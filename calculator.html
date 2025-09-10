@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Basic Calculator</title>
+  <style>
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background: #5987c2; /* light blue background */
+      font-family: Arial, sans-serif;
+    }
+
+    .calculator {
+      width: 320px;
+      background: #ffffff;
+      padding: 20px;
+      border-radius: 20px;
+      box-shadow: 0px 4px 15px rgba(0,0,0,0.2);
+      text-align: center;
+    }
+
+    .calculator h2 {
+      margin-bottom: 15px;
+      font-size: 26px;
+      font-weight: bold;
+      color: #333;
+    }
+
+    .display {
+      width: 93%;
+      height: 60px;
+      background: #222;
+      color: #0f0;
+      font-size: 24px;
+      text-align: right;
+      padding: 10px;
+      border-radius: 10px;
+      overflow: hidden;
+      margin-bottom: 15px;
+    }
+
+    .buttons {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+    }
+
+    button {
+      height: 60px;
+      font-size: 20px;
+      font-weight: bold;
+      border: none;
+      border-radius: 10px;
+      background: #479ca9;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    button:hover {
+      background: #ddd;
+    }
+
+    .operator {
+      background: #9e5abb;
+      color: white;
+    }
+
+    .operator:hover {
+      background: #9e5abb;
+    }
+
+    .equal {
+      background: #9e5abb;
+      color: white;
+      grid-column: span 2;
+    }
+
+    .equal:hover {
+      background: #9e5abb;
+    }
+
+    .clear {
+      background: #9e5abb;
+      color: white;
+    }
+
+    .clear:hover {
+      background: #9e5abb;
+    }
+
+    .delete {
+      background: #9e5abb;
+      color: white;
+    }
+
+    .delete:hover {
+      background: #9e5abb;
+    }
+  </style>
+</head>
+<body>
+  <div class="calculator">
+    <h2>CALCULATOR</h2>
+    <div class="display" id="display">0</div>
+    <div class="buttons">
+      <button class="clear">C</button>
+      <button class="delete">⌫</button>
+      <button class="operator">%</button>
+      <button class="operator">/</button>
+
+      <button>7</button>
+      <button>8</button>
+      <button>9</button>
+      <button class="operator">*</button>
+
+      <button>4</button>
+      <button>5</button>
+      <button>6</button>
+      <button class="operator">-</button>
+
+      <button>1</button>
+      <button>2</button>
+      <button>3</button>
+      <button class="operator">+</button>
+
+      <button>0</button>
+      <button>.</button>
+      <button class="equal">=</button>
+    </div>
+  </div>
+
+  <script>
+    const display = document.getElementById("display");
+    const buttons = document.querySelectorAll("button");
+
+    let currentInput = "";
+    let resultShown = false;
+
+    function updateDisplay(value) {
+      display.textContent = value || "0";
+    }
+
+    // Button clicks
+    buttons.forEach(button => {
+      button.addEventListener("click", () => handleInput(button.textContent, button));
+    });
+
+    // Keyboard input
+    document.addEventListener("keydown", (event) => {
+      const key = event.key;
+
+      if (!isNaN(key) || ["+", "-", "*", "/", "%", "."].includes(key)) {
+        handleInput(key);
+      } 
+      else if (key === "Enter") {
+        event.preventDefault(); // prevent form submission
+        handleInput("=");
+      } 
+      else if (key === "=") {
+        handleInput("=");
+      } 
+      else if (key === "Backspace") {
+        handleInput("⌫", {classList:{contains:(c)=>c==="delete"}});
+      } 
+      else if (key.toLowerCase() === "c" || key === "Escape") {
+        handleInput("C", {classList:{contains:(c)=>c==="clear"}});
+      }
+    });
+
+    // Core handler
+    function handleInput(value, button=null) {
+      if (button && button.classList.contains("clear")) {
+        currentInput = "";
+        updateDisplay("0");
+      } 
+      else if (button && button.classList.contains("delete")) {
+        currentInput = currentInput.slice(0, -1);
+        updateDisplay(currentInput);
+      } 
+      else if (value === "=") {
+        try {
+          currentInput = eval(currentInput).toString();
+          updateDisplay(currentInput);
+          resultShown = true;
+        } catch {
+          updateDisplay("Error");
+          currentInput = "";
+        }
+      } 
+      else {
+        if (resultShown && !isNaN(value)) {
+          currentInput = value; 
+          resultShown = false;
+        } else {
+          currentInput += value;
+        }
+        updateDisplay(currentInput);
+      }
+    }
+  </script>
+</body>
+</html>
